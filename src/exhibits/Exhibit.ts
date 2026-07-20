@@ -31,6 +31,8 @@ export interface Exhibit {
   colliders?: THREE.Box3[];
   /** アニメーションが必要な展示用 */
   update?(dt: number): void;
+  /** メイン描画前の追加レンダリング(レンダーターゲットを使う展示用) */
+  preRender?(renderer: THREE.WebGLRenderer, scene: THREE.Scene): void;
 }
 
 export const DEFAULT_TRIGGER_RADIUS = 3.5;

@@ -14,6 +14,8 @@ export class App {
 
   private readonly clock = new THREE.Clock();
   private readonly updatables: Updatable[] = [];
+  private readonly preRenders: Array<(renderer: THREE.WebGLRenderer, scene: THREE.Scene) => void> =
+    [];
 
   constructor(container: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -41,10 +43,16 @@ export class App {
     this.updatables.push(u);
   }
 
+  /** メイン描画の前に呼ばれる処理(レンダーターゲットへの描画等)を登録する */
+  addPreRender(fn: (renderer: THREE.WebGLRenderer, scene: THREE.Scene) => void): void {
+    this.preRenders.push(fn);
+  }
+
   start(): void {
     this.renderer.setAnimationLoop(() => {
       const dt = Math.min(this.clock.getDelta(), 0.1);
       for (const u of this.updatables) u.update(dt);
+      for (const fn of this.preRenders) fn(this.renderer, this.scene);
       this.renderer.render(this.scene, this.camera);
     });
   }

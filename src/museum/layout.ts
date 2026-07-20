@@ -5,6 +5,7 @@ import type { Exhibit } from '../exhibits/Exhibit';
 import { createGallery2D } from '../exhibits/gallery2d/Gallery2D';
 import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
 import { createAnamorphosis } from '../exhibits/Anamorphosis';
+import { createPenroseStairs } from '../exhibits/PenroseStairs';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 
 export interface MuseumLayout {
@@ -81,6 +82,14 @@ export function createMuseumLayout(): MuseumLayout {
   const anamorphosis = createAnamorphosis();
   placeExhibit(anamorphosis, 14.83, -4, -Math.PI / 2);
   exhibits.push(anamorphosis);
+
+  // --- ペンローズの階段: 南側、ビュースポットは北向き ---
+  const stairs = createPenroseStairs();
+  placeExhibit(stairs, -5, 10, Math.PI);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-5, 4.3, 12.5), new THREE.Vector3(-5, 1, 10), 60),
+  );
+  exhibits.push(stairs);
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {
