@@ -23,8 +23,11 @@ export class Hud {
     this.startOverlay.className = 'start-overlay';
     this.startOverlay.innerHTML = `
       <h1>Fable Optical Illusion Museum</h1>
+      <p>— 錯視の美術館 —</p>
       <p>クリックして入館する</p>
-      <p style="font-size:12px;opacity:.6">WASD で移動 / マウスで視点操作</p>
+      <p style="font-size:12px;opacity:.6">
+        WASD 移動 / マウス 視点 / E ビュースポット / H ヒント
+      </p>
     `;
     this.startOverlay.addEventListener('click', onStart);
     root.appendChild(this.startOverlay);

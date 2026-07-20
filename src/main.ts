@@ -19,13 +19,14 @@ for (const extra of layout.extras) app.scene.add(extra);
 const player = new PlayerController(app.camera, app.renderer.domElement);
 player.colliders.push(...building.colliders);
 for (const exhibit of layout.exhibits) player.colliders.push(...(exhibit.colliders ?? []));
-player.position.set(0, 1.6, 8);
+player.position.copy(layout.spawn);
 app.addUpdatable(player);
 
 const interaction = new InteractionManager(player);
 for (const exhibit of layout.exhibits) {
   app.scene.add(exhibit.root);
   interaction.add(exhibit);
+  if (exhibit.preRender) app.addPreRender(exhibit.preRender.bind(exhibit));
 }
 app.addUpdatable(interaction);
 

@@ -79,26 +79,9 @@ export class Building {
   }
 
   private addBaseLights(): void {
-    const hemi = new THREE.HemisphereLight(0x8888aa, 0x332f2a, 0.5);
+    const hemi = new THREE.HemisphereLight(0x8888aa, 0x332f2a, 0.65);
     this.group.add(hemi);
-    const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.3);
     this.group.add(ambient);
   }
-}
-
-/** Phase 1 用の仮ワンルーム(30 x 30) */
-export function createTemporaryRoom(): BuildingDef {
-  const size = 30;
-  const half = size / 2;
-  const t = 0.3; // 壁厚
-  return {
-    wallHeight: 4.5,
-    floors: [{ x: 0, z: 0, w: size, d: size }],
-    walls: [
-      { x: 0, z: -half, w: size + t, d: t },
-      { x: 0, z: half, w: size + t, d: t },
-      { x: -half, z: 0, w: t, d: size + t },
-      { x: half, z: 0, w: t, d: size + t },
-    ],
-  };
 }
