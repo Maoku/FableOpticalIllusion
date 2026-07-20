@@ -31,6 +31,12 @@ export interface Exhibit {
    * layout での配置時にワールド座標へ変換され、プレイヤーのコリジョンに登録される。
    */
   colliders?: THREE.Box3[];
+  /** 操作方法の説明(UI に表示)。onOperate / onWheel を持つ展示で設定する */
+  interactionHint?: string;
+  /** クリックまたは F キーでの操作(照明切替、答え合わせ等) */
+  onOperate?(): void;
+  /** マウスホイールでの操作(値の調整等)。deltaY は WheelEvent の値 */
+  onWheel?(deltaY: number): void;
   /** アニメーションが必要な展示用 */
   update?(dt: number): void;
   /** メイン描画前の追加レンダリング(レンダーターゲットを使う展示用) */

@@ -23,7 +23,21 @@ export class InteractionManager implements Updatable {
   constructor(private readonly player: PlayerController) {
     window.addEventListener('keydown', (e) => {
       if (e.code === 'KeyE') this.snapToViewSpot();
+      if (e.code === 'KeyF') this.operate();
     });
+    // ポインターロック中のクリックとホイールは展示の操作に使う
+    window.addEventListener('mousedown', () => {
+      if (this.player.isLocked) this.operate();
+    });
+    window.addEventListener('wheel', (e) => {
+      if (this.player.isLocked) this.active?.onWheel?.(e.deltaY);
+    });
+  }
+
+  /** アクティブ展示の操作(照明切替、答え合わせ等)を実行する */
+  operate(): void {
+    if (!this.player.isLocked) return;
+    this.active?.onOperate?.();
   }
 
   add(exhibit: Exhibit): void {

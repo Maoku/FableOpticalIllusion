@@ -9,6 +9,7 @@ export class HintPanel {
   private readonly bar: HTMLElement;
   private readonly titleEl: HTMLElement;
   private readonly viewSpotHintEl: HTMLElement;
+  private readonly operateHintEl: HTMLElement;
   private readonly toggleButton: HTMLButtonElement;
   private readonly panel: HTMLElement;
   private readonly panelTextEl: HTMLElement;
@@ -33,6 +34,10 @@ export class HintPanel {
     this.viewSpotHintEl.className = 'viewspot-hint';
     this.viewSpotHintEl.innerHTML = '<kbd>E</kbd> ビュースポットから見る';
     this.bar.appendChild(this.viewSpotHintEl);
+
+    this.operateHintEl = document.createElement('div');
+    this.operateHintEl.className = 'viewspot-hint';
+    this.bar.appendChild(this.operateHintEl);
 
     this.panel = document.createElement('div');
     this.panel.className = 'hint-panel hidden';
@@ -74,6 +79,8 @@ export class HintPanel {
       ? 'ヒントを閉じる <kbd>H</kbd>'
       : 'ヒントを見る <kbd>H</kbd>';
     this.viewSpotHintEl.style.display = exhibitViewSpots(ex).length > 0 ? '' : 'none';
+    this.operateHintEl.textContent = ex.interactionHint ?? '';
+    this.operateHintEl.style.display = ex.interactionHint ? '' : 'none';
     this.panelTextEl.textContent = ex.hint;
   }
 }
