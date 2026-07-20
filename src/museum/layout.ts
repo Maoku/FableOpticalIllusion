@@ -6,6 +6,7 @@ import { createGallery2D } from '../exhibits/gallery2d/Gallery2D';
 import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
 import { createAnamorphosis } from '../exhibits/Anamorphosis';
 import { createPenroseStairs } from '../exhibits/PenroseStairs';
+import { createAmesRoom } from '../exhibits/AmesRoom';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 
 export interface MuseumLayout {
@@ -57,7 +58,7 @@ export function createMuseumLayout(): MuseumLayout {
   // --- 2D 錯視ギャラリー: 北側の壁に 4 枚 ---
   const gallery = createGallery2D();
   const wallZ = -14.55;
-  const xs = [-9, -3, 3, 9];
+  const xs = [-10, -5, 0, 5];
   gallery.forEach((ex, i) => {
     const x = xs[i] ?? 0;
     ex.root.position.set(x, 0, wallZ);
@@ -90,6 +91,11 @@ export function createMuseumLayout(): MuseumLayout {
     createExhibitSpotlight(new THREE.Vector3(-5, 4.3, 12.5), new THREE.Vector3(-5, 1, 10), 60),
   );
   exhibits.push(stairs);
+
+  // --- エイムズの部屋: 北東の角、覗き窓は南向き ---
+  const ames = createAmesRoom();
+  placeExhibit(ames, 8.5, -10.5, 0);
+  exhibits.push(ames);
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {
