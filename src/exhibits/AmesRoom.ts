@@ -14,7 +14,8 @@ import type { Exhibit } from './Exhibit';
  * ローカル座標系: 覗き窓の目の位置が (0, 1.6, 0)、部屋は z < 0 に広がる。
  */
 
-const P = new THREE.Vector3(0, 1.6, 0); // 覗き窓の目の位置
+export const AMES_EYE = new THREE.Vector3(0, 1.6, 0); // 覗き窓の目の位置
+const P = AMES_EYE;
 const ROOM_W = 1.8; // 仮想の部屋の半幅
 const ROOM_H = 2.4; // 仮想の部屋の高さ
 const ROOM_NEAR = -0.4;
@@ -23,15 +24,15 @@ const S_LEFT = 1.0;
 const S_RIGHT = 0.52;
 const H_RANGE = 0.55; // 正規化に使う横方向視線係数の範囲
 
-/** 画面横方向の位置に応じたスケール係数 */
-function scaleAt(v: THREE.Vector3): number {
+/** 画面横方向の位置に応じたスケール係数(テストのため export) */
+export function scaleAt(v: THREE.Vector3): number {
   const h = (v.x - P.x) / (P.z - v.z);
   const u = THREE.MathUtils.clamp((h + H_RANGE) / (2 * H_RANGE), 0, 1);
   return THREE.MathUtils.lerp(S_LEFT, S_RIGHT, u);
 }
 
-/** 仮想の部屋の点を、視線に沿って実際の(歪んだ)位置へ動かす */
-function distort(v: THREE.Vector3): THREE.Vector3 {
+/** 仮想の部屋の点を、視線に沿って実際の(歪んだ)位置へ動かす(テストのため export) */
+export function distort(v: THREE.Vector3): THREE.Vector3 {
   return P.clone().addScaledVector(v.clone().sub(P), scaleAt(v));
 }
 
