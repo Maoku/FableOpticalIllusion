@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { BuildingDef } from './Building';
-import type { Exhibit } from '../exhibits/Exhibit';
+import { exhibitViewSpots, type Exhibit } from '../exhibits/Exhibit';
 import { createGallery2D } from '../exhibits/gallery2d/Gallery2D';
 import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
 import { createAnamorphosis } from '../exhibits/Anamorphosis';
@@ -9,6 +9,7 @@ import { createAmesRoom } from '../exhibits/AmesRoom';
 import { createHollowFace } from '../exhibits/HollowFace';
 import { createRotatingSnakes } from '../exhibits/RotatingSnakes';
 import { createImpossibleCube } from '../exhibits/ImpossibleCube';
+import { createTwoTruths } from '../exhibits/TwoTruths';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 import { createTitlePlate, createWallSign } from './TitlePlate';
 
@@ -68,9 +69,9 @@ function placeExhibit(ex: Exhibit, x: number, z: number, rotY = 0): void {
   ex.root.position.set(x, 0, z);
   ex.root.rotation.y = rotY;
   ex.root.updateMatrixWorld(true);
-  if (ex.viewSpot) {
-    ex.viewSpot.position.applyMatrix4(ex.root.matrixWorld);
-    ex.viewSpot.target.applyMatrix4(ex.root.matrixWorld);
+  for (const spot of exhibitViewSpots(ex)) {
+    spot.position.applyMatrix4(ex.root.matrixWorld);
+    spot.target.applyMatrix4(ex.root.matrixWorld);
   }
   for (const box of ex.colliders ?? []) box.applyMatrix4(ex.root.matrixWorld);
 }
@@ -178,6 +179,15 @@ export function createMuseumLayout(): MuseumLayout {
   exhibits.push(cube);
   placePlate(extras, cube.title, -6.4, -0.7, 0);
 
+  // --- 二つの真実(REAL / FAKE): 主展示室の東寄り、南と東の 2 視点 ---
+  const twoTruths = createTwoTruths();
+  placeExhibit(twoTruths, 9.5, 2.5, 0);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(9.5, 4.3, 4.8), new THREE.Vector3(9.5, 1.2, 2.5), 50),
+  );
+  exhibits.push(twoTruths);
+  placePlate(extras, twoTruths.title, 8.1, 4.1, 0);
+
   // --- エントランスの演出 ---
   const sign = createWallSign('FABLE OPTICAL ILLUSION MUSEUM', 5.2, 0.8);
   sign.position.set(0, 3.55, 7.18);
@@ -192,7 +202,7 @@ export function createMuseumLayout(): MuseumLayout {
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {
-    if (ex.viewSpot) extras.push(createViewSpotMarker(ex.viewSpot));
+    for (const spot of exhibitViewSpots(ex)) extras.push(createViewSpotMarker(spot));
   }
 
   return { building, exhibits, extras, spawn: new THREE.Vector3(0, 1.6, 12.5) };

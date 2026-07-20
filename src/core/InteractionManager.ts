@@ -1,7 +1,12 @@
 import * as THREE from 'three';
 import type { Updatable } from './App';
 import type { PlayerController } from './PlayerController';
-import { DEFAULT_TRIGGER_RADIUS, exhibitFocusPoint, type Exhibit } from '../exhibits/Exhibit';
+import {
+  DEFAULT_TRIGGER_RADIUS,
+  exhibitFocusPoint,
+  exhibitViewSpots,
+  type Exhibit,
+} from '../exhibits/Exhibit';
 
 export type ActiveChangeHandler = (exhibit: Exhibit | null) => void;
 
@@ -33,11 +38,22 @@ export class InteractionManager implements Updatable {
     this.handlers.push(handler);
   }
 
-  /** アクティブ展示にビュースポットがあれば、視点をそこへスナップする */
+  /** アクティブ展示にビュースポットがあれば、最も近いスポットへ視点をスナップする */
   snapToViewSpot(): void {
-    const spot = this.active?.viewSpot;
-    if (!spot || !this.player.isLocked) return;
-    this.player.setPose(spot.position, spot.target);
+    if (!this.active || !this.player.isLocked) return;
+    const spots = exhibitViewSpots(this.active);
+    if (spots.length === 0) return;
+    const pos = this.player.position;
+    let nearest = spots[0];
+    let nearestDist = Infinity;
+    for (const spot of spots) {
+      const d = Math.hypot(spot.position.x - pos.x, spot.position.z - pos.z);
+      if (d < nearestDist) {
+        nearest = spot;
+        nearestDist = d;
+      }
+    }
+    this.player.setPose(nearest.position, nearest.target);
   }
 
   update(dt: number): void {

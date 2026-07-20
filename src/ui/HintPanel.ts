@@ -1,4 +1,4 @@
-import type { Exhibit } from '../exhibits/Exhibit';
+import { exhibitViewSpots, type Exhibit } from '../exhibits/Exhibit';
 
 /**
  * アクティブな展示の名前と「ヒントを見る」ボタン、説明パネルを表示する。
@@ -73,7 +73,7 @@ export class HintPanel {
     this.toggleButton.innerHTML = this.open
       ? 'ヒントを閉じる <kbd>H</kbd>'
       : 'ヒントを見る <kbd>H</kbd>';
-    this.viewSpotHintEl.style.display = ex.viewSpot ? '' : 'none';
+    this.viewSpotHintEl.style.display = exhibitViewSpots(ex).length > 0 ? '' : 'none';
     this.panelTextEl.textContent = ex.hint;
   }
 }

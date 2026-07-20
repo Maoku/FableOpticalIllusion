@@ -22,6 +22,8 @@ export interface Exhibit {
   root: THREE.Group;
   /** 錯視が成立する推奨視点 */
   viewSpot?: ViewSpot;
+  /** 追加の推奨視点(複数の視点で異なる見え方をする展示用) */
+  extraViewSpots?: ViewSpot[];
   /** UI が反応する近接距離(m)。省略時は 3.5 */
   triggerRadius?: number;
   /**
@@ -40,4 +42,12 @@ export const DEFAULT_TRIGGER_RADIUS = 3.5;
 /** 展示の近接判定基準点(ワールド座標) */
 export function exhibitFocusPoint(exhibit: Exhibit, out: THREE.Vector3): THREE.Vector3 {
   return exhibit.root.getWorldPosition(out);
+}
+
+/** 展示が持つすべてのビュースポット */
+export function exhibitViewSpots(exhibit: Exhibit): ViewSpot[] {
+  const spots: ViewSpot[] = [];
+  if (exhibit.viewSpot) spots.push(exhibit.viewSpot);
+  if (exhibit.extraViewSpots) spots.push(...exhibit.extraViewSpots);
+  return spots;
 }
