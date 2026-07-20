@@ -4,6 +4,7 @@ import { createTemporaryRoom } from './Building';
 import type { Exhibit } from '../exhibits/Exhibit';
 import { createGallery2D } from '../exhibits/gallery2d/Gallery2D';
 import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
+import { createAnamorphosis } from '../exhibits/Anamorphosis';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 
 export interface MuseumLayout {
@@ -75,6 +76,11 @@ export function createMuseumLayout(): MuseumLayout {
     createExhibitSpotlight(new THREE.Vector3(-9.5, 4.3, -6), new THREE.Vector3(-12, 1.2, -6)),
   );
   exhibits.push(penrose);
+
+  // --- アナモルフォーシス: 東の壁面+床、ビュースポットは西向き ---
+  const anamorphosis = createAnamorphosis();
+  placeExhibit(anamorphosis, 14.83, -4, -Math.PI / 2);
+  exhibits.push(anamorphosis);
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {
