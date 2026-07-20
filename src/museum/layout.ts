@@ -3,6 +3,7 @@ import type { BuildingDef } from './Building';
 import { createTemporaryRoom } from './Building';
 import type { Exhibit } from '../exhibits/Exhibit';
 import { createGallery2D } from '../exhibits/gallery2d/Gallery2D';
+import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 
 export interface MuseumLayout {
@@ -25,6 +26,21 @@ function createExhibitSpotlight(
   group.add(light);
   group.add(light.target);
   return group;
+}
+
+/**
+ * 展示を指定位置・向きに配置し、ローカル定義のビュースポットとコライダーを
+ * ワールド座標へ変換する。
+ */
+function placeExhibit(ex: Exhibit, x: number, z: number, rotY = 0): void {
+  ex.root.position.set(x, 0, z);
+  ex.root.rotation.y = rotY;
+  ex.root.updateMatrixWorld(true);
+  if (ex.viewSpot) {
+    ex.viewSpot.position.applyMatrix4(ex.root.matrixWorld);
+    ex.viewSpot.target.applyMatrix4(ex.root.matrixWorld);
+  }
+  for (const box of ex.colliders ?? []) box.applyMatrix4(ex.root.matrixWorld);
 }
 
 /**
@@ -51,6 +67,14 @@ export function createMuseumLayout(): MuseumLayout {
     );
     exhibits.push(ex);
   });
+
+  // --- ペンローズの三角形: 西の壁際、ビュースポットは東向き ---
+  const penrose = createPenroseTriangle();
+  placeExhibit(penrose, -12, -6, Math.PI / 2);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-9.5, 4.3, -6), new THREE.Vector3(-12, 1.2, -6)),
+  );
+  exhibits.push(penrose);
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {

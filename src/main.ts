@@ -18,6 +18,7 @@ for (const extra of layout.extras) app.scene.add(extra);
 
 const player = new PlayerController(app.camera, app.renderer.domElement);
 player.colliders.push(...building.colliders);
+for (const exhibit of layout.exhibits) player.colliders.push(...(exhibit.colliders ?? []));
 player.position.set(0, 1.6, 8);
 app.addUpdatable(player);
 

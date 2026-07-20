@@ -24,6 +24,11 @@ export interface Exhibit {
   viewSpot?: ViewSpot;
   /** UI が反応する近接距離(m)。省略時は 3.5 */
   triggerRadius?: number;
+  /**
+   * 通行不可領域(生成時はローカル座標)。
+   * layout での配置時にワールド座標へ変換され、プレイヤーのコリジョンに登録される。
+   */
+  colliders?: THREE.Box3[];
   /** アニメーションが必要な展示用 */
   update?(dt: number): void;
 }
