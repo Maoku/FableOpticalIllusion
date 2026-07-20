@@ -1,6 +1,11 @@
 # Fable Optical Illusion Museum
 
-ブラウザで歩き回れる 3D 錯視ミュージアム。Three.js + TypeScript + Vite 製の完全静的サイトです。
+Claude Fable 5 製のブラウザで歩き回れる 3D 錯視ミュージアム。
+
+鑑賞できる GitHub Pages
+https://maoku.github.io/FableOpticalIllusion/
+
+展示されている内容は全て Claude Fable 5 が実装したものです
 
 ![Three.js](https://img.shields.io/badge/Three.js-black?logo=three.js) ![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
@@ -67,3 +72,7 @@ npm run format   # Prettier
 Actions 画面の **Deploy to GitHub Pages** から手動実行することもできます。
 `vite.config.ts` で `base: './'` を設定しているため、ユーザーサイトと
 プロジェクトサイトのどちらでも動作します。
+
+# ライセンス
+
+MIT
