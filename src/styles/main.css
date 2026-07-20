@@ -18,6 +18,11 @@ body {
   overflow: hidden;
   background: #0b0b0f;
   color: var(--ui-fg);
+  /* スマホでのスクロール・ダブルタップズームを抑止する */
+  touch-action: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 #app,
@@ -77,6 +82,7 @@ body {
 .start-overlay {
   position: absolute;
   inset: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -109,6 +115,7 @@ body {
 /* --- 展示バー(画面下部) --- */
 .exhibit-bar {
   position: absolute;
+  z-index: 3;
   left: 50%;
   bottom: 28px;
   transform: translateX(-50%);
@@ -171,6 +178,7 @@ body {
 /* --- ヒントパネル --- */
 .hint-panel {
   position: absolute;
+  z-index: 3;
   left: 50%;
   bottom: 92px;
   transform: translateX(-50%);
@@ -182,4 +190,175 @@ body {
   font-size: 13px;
   line-height: 1.9;
   transition: opacity 0.2s ease;
+}
+
+/* --- タッチ操作(バーチャルパッド) --- */
+.touch-controls.hidden {
+  display: none;
+}
+
+/* 視点ドラッグ用の全画面レイヤー。スティック・ボタンより下に敷く */
+.touch-look {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.touch-stick {
+  position: absolute;
+  z-index: 4;
+  left: max(24px, env(safe-area-inset-left));
+  bottom: max(28px, env(safe-area-inset-bottom));
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: rgba(18, 18, 24, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.touch-stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  border-radius: 50%;
+  background: rgba(212, 176, 106, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.touch-buttons,
+.touch-adjust {
+  position: absolute;
+  z-index: 4;
+  right: max(24px, env(safe-area-inset-right));
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.touch-buttons {
+  bottom: max(28px, env(safe-area-inset-bottom));
+  align-items: flex-end;
+}
+
+.touch-adjust {
+  bottom: calc(max(28px, env(safe-area-inset-bottom)) + 84px);
+  flex-direction: row-reverse;
+}
+
+.touch-button {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ui-fg);
+  background: rgba(18, 18, 24, 0.6);
+  border: 1px solid rgba(212, 176, 106, 0.5);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.touch-button:active {
+  background: rgba(212, 176, 106, 0.35);
+}
+
+/* 現在の展示で使えない操作は薄く表示する(押しても無害なので無効化はしない) */
+.touch-button.dim {
+  opacity: 0.35;
+}
+
+.touch-adjust.hidden {
+  display: none;
+}
+
+/* タッチ操作時は下部がパッドで埋まるので、操作説明は入館オーバーレイに任せる */
+body.touch-mode .help {
+  display: none;
+}
+
+/* PC ではバー・ヒントはそれぞれ従来どおり絶対配置する */
+.exhibit-ui {
+  display: contents;
+}
+
+/* タッチ操作時は画面中央の展示を隠さないよう、上部に縦積みする */
+body.touch-mode .exhibit-ui {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  top: max(12px, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: calc(100vw - 24px);
+}
+
+body.touch-mode .exhibit-bar,
+body.touch-mode .hint-panel {
+  position: static;
+  transform: none;
+  max-width: 100%;
+}
+
+body.touch-mode .exhibit-bar {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+body.touch-mode .hint-panel {
+  padding: 12px 16px;
+  font-size: 12px;
+  line-height: 1.7;
+  /* 横持ちで画面が低いときは中でスクロールさせる */
+  max-height: 45vh;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+/* 非表示時に縦積みの隙間が残らないようにする */
+body.touch-mode .exhibit-bar.hidden,
+body.touch-mode .hint-panel.hidden {
+  display: none;
+}
+
+/* 狭い画面ではスティックとボタンが重なるので一回り小さくする */
+@media (max-width: 460px) {
+  .touch-stick {
+    left: max(16px, env(safe-area-inset-left));
+    width: 112px;
+    height: 112px;
+  }
+
+  .touch-stick-knob {
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+  }
+
+  .touch-buttons,
+  .touch-adjust {
+    right: max(14px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+
+  .touch-adjust {
+    bottom: calc(max(28px, env(safe-area-inset-bottom)) + 70px);
+  }
+
+  .touch-button {
+    width: 56px;
+    height: 56px;
+    font-size: 12px;
+  }
+
 }

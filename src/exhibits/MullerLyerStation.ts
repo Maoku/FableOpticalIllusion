@@ -103,7 +103,8 @@ function drawScreen(ctx: CanvasRenderingContext2D, state: RoundState): void {
   } else {
     ctx.fillStyle = '#8a8478';
     ctx.font = '500 30px "Hiragino Sans", sans-serif';
-    ctx.fillText('ホイール: 調整 / クリック: 答え合わせ', TEX_SIZE / 2, 880);
+    // 操作方法は端末で異なるので、テクスチャ側は device 非依存の文言にする
+    ctx.fillText('長さを調整して、答え合わせ', TEX_SIZE / 2, 880);
   }
 }
 
@@ -154,6 +155,7 @@ export function createMullerLyerStation(): Exhibit {
     },
     triggerRadius: 3,
     interactionHint: 'ホイール: 長さを調整 / クリック: 答え合わせ',
+    touchInteractionHint: '＋－: 長さを調整 / 「操作」: 答え合わせ',
     onWheel(deltaY: number): void {
       if (state.revealed) return;
       state.adjLen = THREE.MathUtils.clamp(state.adjLen - deltaY * 0.35, MIN_LEN, MAX_LEN);

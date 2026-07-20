@@ -6,6 +6,9 @@ const EYE_HEIGHT = 1.6;
 const PLAYER_RADIUS = 0.35;
 const WALK_SPEED = 3.6;
 const SPRINT_SPEED = 6.0;
+/** タッチ視点操作の感度(ラジアン / px) */
+const TOUCH_LOOK_SENSITIVITY = 0.004;
+const MAX_PITCH = Math.PI / 2 - 0.01;
 
 /**
  * PointerLock による一人称移動と、AABB コライダーへの簡易コリジョン。
@@ -19,6 +22,11 @@ export class PlayerController implements Updatable {
   private readonly camera: THREE.PerspectiveCamera;
   private readonly keys = new Set<string>();
   private readonly velocity = new THREE.Vector3();
+  private readonly euler = new THREE.Euler(0, 0, 0, 'YXZ');
+  /** バーチャルパッドからの移動入力(前後・左右、それぞれ -1..1) */
+  private readonly moveInput = { forward: 0, right: 0 };
+  /** タッチ操作モード時は PointerLock なしで操作を受け付ける */
+  private touchActive = false;
 
   constructor(camera: THREE.PerspectiveCamera, domElement: HTMLElement) {
     this.camera = camera;
@@ -34,8 +42,34 @@ export class PlayerController implements Updatable {
     return this.controls.isLocked;
   }
 
+  /** 入館済みで操作を受け付ける状態か(PointerLock またはタッチ操作モード) */
+  get isActive(): boolean {
+    return this.controls.isLocked || this.touchActive;
+  }
+
   get position(): THREE.Vector3 {
     return this.camera.position;
+  }
+
+  /** タッチ操作モードの ON/OFF。ON の間は PointerLock なしで移動・視点操作を行う */
+  setTouchActive(active: boolean): void {
+    this.touchActive = active;
+    if (!active) this.setMoveInput(0, 0);
+  }
+
+  /** バーチャルパッドからの移動入力を設定する(前:+1 / 右:+1) */
+  setMoveInput(forward: number, right: number): void {
+    this.moveInput.forward = forward;
+    this.moveInput.right = right;
+  }
+
+  /** タッチドラッグ量(px)から視点を回転させる */
+  look(dx: number, dy: number): void {
+    this.euler.setFromQuaternion(this.camera.quaternion);
+    this.euler.y -= dx * TOUCH_LOOK_SENSITIVITY;
+    this.euler.x -= dy * TOUCH_LOOK_SENSITIVITY;
+    this.euler.x = Math.max(-MAX_PITCH, Math.min(MAX_PITCH, this.euler.x));
+    this.camera.quaternion.setFromEuler(this.euler);
   }
 
   lock(): void {
@@ -54,14 +88,16 @@ export class PlayerController implements Updatable {
   }
 
   update(dt: number): void {
-    if (!this.controls.isLocked) return;
+    if (!this.isActive) return;
 
     const forward =
       (this.keys.has('KeyW') || this.keys.has('ArrowUp') ? 1 : 0) -
-      (this.keys.has('KeyS') || this.keys.has('ArrowDown') ? 1 : 0);
+      (this.keys.has('KeyS') || this.keys.has('ArrowDown') ? 1 : 0) +
+      this.moveInput.forward;
     const right =
       (this.keys.has('KeyD') || this.keys.has('ArrowRight') ? 1 : 0) -
-      (this.keys.has('KeyA') || this.keys.has('ArrowLeft') ? 1 : 0);
+      (this.keys.has('KeyA') || this.keys.has('ArrowLeft') ? 1 : 0) +
+      this.moveInput.right;
 
     const speed =
       this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') ? SPRINT_SPEED : WALK_SPEED;
@@ -77,7 +113,9 @@ export class PlayerController implements Updatable {
       .set(0, 0, 0)
       .addScaledVector(dir, forward)
       .addScaledVector(side, right);
-    if (this.velocity.lengthSq() > 0) this.velocity.normalize().multiplyScalar(speed * dt);
+    // バーチャルパッドの傾き量を活かすため、長さ 1 を超えたときだけ正規化する
+    if (this.velocity.lengthSq() > 1) this.velocity.normalize();
+    this.velocity.multiplyScalar(speed * dt);
 
     // 軸ごとに分けて衝突解決(壁ずり移動)
     this.tryMove(this.velocity.x, 0);

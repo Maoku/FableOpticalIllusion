@@ -33,6 +33,8 @@ export interface Exhibit {
   colliders?: THREE.Box3[];
   /** 操作方法の説明(UI に表示)。onOperate / onWheel を持つ展示で設定する */
   interactionHint?: string;
+  /** タッチ操作時の説明。省略時は interactionHint を使う */
+  touchInteractionHint?: string;
   /** クリックまたは F キーでの操作(照明切替、答え合わせ等) */
   onOperate?(): void;
   /** マウスホイールでの操作(値の調整等)。deltaY は WheelEvent の値 */

@@ -17,7 +17,10 @@ export class HintPanel {
   private current: Exhibit | null = null;
   private open = false;
 
-  constructor(root: HTMLElement) {
+  constructor(
+    root: HTMLElement,
+    private readonly touch = false,
+  ) {
     this.bar = document.createElement('div');
     this.bar.className = 'exhibit-bar hidden';
 
@@ -32,7 +35,9 @@ export class HintPanel {
 
     this.viewSpotHintEl = document.createElement('div');
     this.viewSpotHintEl.className = 'viewspot-hint';
-    this.viewSpotHintEl.innerHTML = '<kbd>E</kbd> ビュースポットから見る';
+    this.viewSpotHintEl.innerHTML = this.touch
+      ? '「視点」でビュースポットから見る'
+      : '<kbd>E</kbd> ビュースポットから見る';
     this.bar.appendChild(this.viewSpotHintEl);
 
     this.operateHintEl = document.createElement('div');
@@ -44,8 +49,13 @@ export class HintPanel {
     this.panelTextEl = document.createElement('p');
     this.panel.appendChild(this.panelTextEl);
 
-    root.appendChild(this.panel);
-    root.appendChild(this.bar);
+    // タッチ操作時はバーとヒントを画面上部に縦積みするためのコンテナ
+    // (PC では display:contents で従来どおり各要素が個別に配置される)
+    const container = document.createElement('div');
+    container.className = 'exhibit-ui';
+    container.appendChild(this.bar);
+    container.appendChild(this.panel);
+    root.appendChild(container);
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'KeyH') this.toggle();
@@ -75,12 +85,12 @@ export class HintPanel {
     if (!ex) return;
 
     this.titleEl.textContent = ex.title;
-    this.toggleButton.innerHTML = this.open
-      ? 'ヒントを閉じる <kbd>H</kbd>'
-      : 'ヒントを見る <kbd>H</kbd>';
+    const label = this.open ? 'ヒントを閉じる' : 'ヒントを見る';
+    this.toggleButton.innerHTML = this.touch ? label : `${label} <kbd>H</kbd>`;
     this.viewSpotHintEl.style.display = exhibitViewSpots(ex).length > 0 ? '' : 'none';
-    this.operateHintEl.textContent = ex.interactionHint ?? '';
-    this.operateHintEl.style.display = ex.interactionHint ? '' : 'none';
+    const hint = (this.touch ? ex.touchInteractionHint : undefined) ?? ex.interactionHint ?? '';
+    this.operateHintEl.textContent = hint;
+    this.operateHintEl.style.display = hint ? '' : 'none';
     this.panelTextEl.textContent = ex.hint;
   }
 }

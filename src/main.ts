@@ -5,6 +5,8 @@ import { Building } from './museum/Building';
 import { createMuseumLayout } from './museum/layout';
 import { Hud } from './ui/Hud';
 import { HintPanel } from './ui/HintPanel';
+import { TouchControls, isTouchDevice } from './ui/TouchControls';
+import { exhibitViewSpots } from './exhibits/Exhibit';
 
 const appContainer = document.getElementById('app')!;
 const uiRoot = document.getElementById('ui-root')!;
@@ -30,11 +32,43 @@ for (const exhibit of layout.exhibits) {
 }
 app.addUpdatable(interaction);
 
-const hud = new Hud(uiRoot, () => player.lock());
+const touch = isTouchDevice();
+document.body.classList.toggle('touch-mode', touch);
+
+const hintPanel = new HintPanel(uiRoot, touch);
+
+// スマホではポインターロックの代わりにバーチャルパッドで操作する
+const touchControls = touch
+  ? new TouchControls(uiRoot, player, {
+      onOperate: () => interaction.operate(),
+      onViewSpot: () => interaction.snapToViewSpot(),
+      onHint: () => hintPanel.toggle(),
+      onAdjust: (deltaY) => interaction.adjust(deltaY),
+    })
+  : null;
+
+const hud = new Hud(
+  uiRoot,
+  () => {
+    if (touchControls) {
+      touchControls.setEnabled(true);
+      hud.setLocked(true);
+    } else {
+      player.lock();
+    }
+  },
+  touch,
+);
 player.onLockChange((locked) => hud.setLocked(locked));
 
-const hintPanel = new HintPanel(uiRoot);
-interaction.onActiveChange((exhibit) => hintPanel.setExhibit(exhibit));
+interaction.onActiveChange((exhibit) => {
+  hintPanel.setExhibit(exhibit);
+  touchControls?.setExhibitState({
+    operable: !!exhibit?.onOperate,
+    hasViewSpot: !!exhibit && exhibitViewSpots(exhibit).length > 0,
+    adjustable: !!exhibit?.onWheel,
+  });
+});
 
 app.start();
 

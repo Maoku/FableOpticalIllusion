@@ -36,8 +36,14 @@ export class InteractionManager implements Updatable {
 
   /** アクティブ展示の操作(照明切替、答え合わせ等)を実行する */
   operate(): void {
-    if (!this.player.isLocked) return;
+    if (!this.player.isActive) return;
     this.active?.onOperate?.();
+  }
+
+  /** ホイール相当の値操作(タッチ UI の増減ボタンからも呼ばれる) */
+  adjust(deltaY: number): void {
+    if (!this.player.isActive) return;
+    this.active?.onWheel?.(deltaY);
   }
 
   add(exhibit: Exhibit): void {
@@ -54,7 +60,7 @@ export class InteractionManager implements Updatable {
 
   /** アクティブ展示にビュースポットがあれば、最も近いスポットへ視点をスナップする */
   snapToViewSpot(): void {
-    if (!this.active || !this.player.isLocked) return;
+    if (!this.active || !this.player.isActive) return;
     const spots = exhibitViewSpots(this.active);
     if (spots.length === 0) return;
     const pos = this.player.position;

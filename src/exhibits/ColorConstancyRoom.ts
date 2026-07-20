@@ -115,6 +115,7 @@ export function createColorConstancyRoom(): Exhibit {
     },
     triggerRadius: 3.4,
     interactionHint: 'クリック / F: 照明を切り替える',
+    touchInteractionHint: '「操作」: 照明を切り替える',
     onOperate(): void {
       tinted = !tinted;
       light.color.setHex(tinted ? TINTED_COLOR : WHITE_COLOR);
