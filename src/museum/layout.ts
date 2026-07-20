@@ -7,6 +7,7 @@ import { createPenroseTriangle } from '../exhibits/PenroseTriangle';
 import { createAnamorphosis } from '../exhibits/Anamorphosis';
 import { createPenroseStairs } from '../exhibits/PenroseStairs';
 import { createAmesRoom } from '../exhibits/AmesRoom';
+import { createHollowFace } from '../exhibits/HollowFace';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 
 export interface MuseumLayout {
@@ -96,6 +97,14 @@ export function createMuseumLayout(): MuseumLayout {
   const ames = createAmesRoom();
   placeExhibit(ames, 8.5, -10.5, 0);
   exhibits.push(ames);
+
+  // --- ホロウフェイス: 西の壁際南寄り、東向き ---
+  const hollowFace = createHollowFace();
+  placeExhibit(hollowFace, -12, 5, Math.PI / 2);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-9.5, 4.3, 5), new THREE.Vector3(-12, 1.75, 5)),
+  );
+  exhibits.push(hollowFace);
 
   // ビュースポットを持つ展示にはマーカーを置く
   for (const ex of exhibits) {
