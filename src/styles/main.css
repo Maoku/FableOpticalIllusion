@@ -105,3 +105,81 @@ body {
   font-size: 14px;
   opacity: 0.85;
 }
+
+/* --- 展示バー(画面下部) --- */
+.exhibit-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px;
+  background: var(--ui-bg);
+  border: 1px solid rgba(212, 176, 106, 0.35);
+  border-radius: 10px;
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+.exhibit-bar.hidden,
+.hint-panel.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.exhibit-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ui-accent);
+  letter-spacing: 0.06em;
+}
+
+.hint-toggle {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--ui-fg);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hint-toggle:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hint-toggle kbd,
+.viewspot-hint kbd {
+  display: inline-block;
+  min-width: 16px;
+  padding: 0 3px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.viewspot-hint {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+/* --- ヒントパネル --- */
+.hint-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 40px));
+  padding: 16px 20px;
+  background: var(--ui-bg);
+  border: 1px solid rgba(212, 176, 106, 0.35);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.9;
+  transition: opacity 0.2s ease;
+}
