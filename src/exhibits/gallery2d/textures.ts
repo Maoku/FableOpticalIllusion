@@ -174,6 +174,80 @@ export function createKanizsaCanvas(): HTMLCanvasElement {
   return canvas;
 }
 
+/** エビングハウス錯視: 同じ大きさの円が、周囲の円の大きさで違って見える */
+export function createEbbinghausCanvas(): HTMLCanvasElement {
+  const size = 1024;
+  const [canvas, ctx] = createCanvas(size, size);
+  ctx.fillStyle = '#f2ede2';
+  ctx.fillRect(0, 0, size, size);
+
+  const circle = (x: number, y: number, r: number, color: string): void => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  const orange = '#e08a2c';
+  const gray = '#9a94a8';
+  const centerR = 78;
+
+  // 左: 大きな円に囲まれた中心円(小さく見える)
+  const lx = 300;
+  const ly = 512;
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    circle(lx + 236 * Math.cos(a), ly + 236 * Math.sin(a), 105, gray);
+  }
+  circle(lx, ly, centerR, orange);
+
+  // 右: 小さな円に囲まれた中心円(大きく見える)
+  const rx = 748;
+  const ry = 512;
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+    circle(rx + 128 * Math.cos(a), ry + 128 * Math.sin(a), 30, gray);
+  }
+  circle(rx, ry, centerR, orange);
+
+  return canvas;
+}
+
+/** ツェルナー錯視: 平行な線が、短い斜線のせいで傾いて見える */
+export function createZollnerCanvas(): HTMLCanvasElement {
+  const size = 1024;
+  const [canvas, ctx] = createCanvas(size, size);
+  ctx.fillStyle = '#f2ede2';
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.strokeStyle = '#22222a';
+  ctx.lineCap = 'round';
+
+  const rows = 7;
+  const margin = 90;
+  const tick = 46;
+  for (let r = 0; r < rows; r++) {
+    const y = margin + ((size - margin * 2) / (rows - 1)) * r;
+    // 主線(すべて水平・平行)
+    ctx.lineWidth = 9;
+    ctx.beginPath();
+    ctx.moveTo(margin, y);
+    ctx.lineTo(size - margin, y);
+    ctx.stroke();
+    // 交差する短い斜線(行ごとに向きを反転)
+    const dir = r % 2 === 0 ? 1 : -1;
+    ctx.lineWidth = 7;
+    for (let x = margin + 20; x <= size - margin - 20; x += 56) {
+      ctx.beginPath();
+      ctx.moveTo(x - tick * 0.7, y - tick * 0.7 * dir);
+      ctx.lineTo(x + tick * 0.7, y + tick * 0.7 * dir);
+      ctx.stroke();
+    }
+  }
+
+  return canvas;
+}
+
 /** カフェウォール錯視: 平行な水平線が傾いて見える */
 export function createCafeWallCanvas(): HTMLCanvasElement {
   const size = 1024;

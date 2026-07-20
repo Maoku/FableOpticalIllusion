@@ -3,8 +3,10 @@ import type { Exhibit } from '../Exhibit';
 import {
   createCafeWallCanvas,
   createCheckerShadowCanvas,
+  createEbbinghausCanvas,
   createKanizsaCanvas,
   createMullerLyerCanvas,
+  createZollnerCanvas,
 } from './textures';
 import { createWallLabel } from '../../museum/TitlePlate';
 
@@ -36,6 +38,20 @@ const PAINTINGS: PaintingDef[] = [
     hint:
       '中央に白い三角形が浮かんで見えますが、輪郭線はどこにも描かれていません。欠けた円(パックマン形)の配置から、脳が「手前に三角形がある」と解釈して存在しない輪郭(主観的輪郭)を作り出しています。',
     createCanvas: createKanizsaCanvas,
+  },
+  {
+    id: 'ebbinghaus',
+    title: 'エビングハウス錯視',
+    hint:
+      '2 つのオレンジ色の円はまったく同じ大きさです。大きな円に囲まれた左の円は小さく、小さな円に囲まれた右の円は大きく見えます。大きさの知覚が絶対的なものではなく、周囲との比較で決まることを示す代表的な錯視です。',
+    createCanvas: createEbbinghausCanvas,
+  },
+  {
+    id: 'zollner',
+    title: 'ツェルナー錯視',
+    hint:
+      '太い横線はすべて平行です。交差する短い斜線の向きに引きずられて、線同士が傾いて交わりそうに見えます。斜線との交差角度を脳が実際より大きく見積もるためと考えられています。',
+    createCanvas: createZollnerCanvas,
   },
   {
     id: 'cafe-wall',
