@@ -10,6 +10,8 @@ import { createHollowFace } from '../exhibits/HollowFace';
 import { createRotatingSnakes } from '../exhibits/RotatingSnakes';
 import { createImpossibleCube } from '../exhibits/ImpossibleCube';
 import { createTwoTruths } from '../exhibits/TwoTruths';
+import { createColorConstancyRoom } from '../exhibits/ColorConstancyRoom';
+import { createMullerLyerStation } from '../exhibits/MullerLyerStation';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 import { createTitlePlate, createWallSign } from './TitlePlate';
 
@@ -187,6 +189,21 @@ export function createMuseumLayout(): MuseumLayout {
   );
   exhibits.push(twoTruths);
   placePlate(extras, twoTruths.title, 8.1, 4.1, 0);
+
+  // --- 色の恒常性の部屋: 仕切り壁の主展示室側・東寄り(照明切替) ---
+  const colorRoom = createColorConstancyRoom();
+  placeExhibit(colorRoom, 6.5, 5.9, Math.PI);
+  exhibits.push(colorRoom);
+  placePlate(extras, colorRoom.title, 4.9, 4.6, Math.PI);
+
+  // --- ミュラー・リヤー調整実験: エントランスホール西側(体験装置) ---
+  const mlStation = createMullerLyerStation();
+  placeExhibit(mlStation, -6.5, 11, Math.PI / 2);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-4, 4.2, 11), new THREE.Vector3(-6.5, 1.6, 11)),
+  );
+  exhibits.push(mlStation);
+  placePlate(extras, mlStation.title, -5.6, 12.4, Math.PI / 2);
 
   // --- エントランスの演出 ---
   const sign = createWallSign('FABLE OPTICAL ILLUSION MUSEUM', 5.2, 0.8);
