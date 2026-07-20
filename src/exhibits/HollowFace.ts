@@ -92,10 +92,11 @@ export function createHollowFace(): Exhibit {
   pedestal.receiveShadow = true;
   root.add(pedestal);
 
-  // 支柱は顔の裏側に立てる
+  // 支柱は顔の裏側に立てる。凹面の最深部(z ≈ -0.45)より必ず後ろに置き、
+  // 首振り回転(±0.65rad で |z| は最大 0.45)でも正面視で鼻に干渉しないようにする
   const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x4a4550, roughness: 0.7 });
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.85, 12), poleMaterial);
-  pole.position.set(0, 1.42, -0.42);
+  pole.position.set(0, 1.42, -0.58);
   root.add(pole);
 
   // 凹面の顔(開口部が +z、つまり鑑賞者側を向く)
