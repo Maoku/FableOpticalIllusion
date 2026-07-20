@@ -150,6 +150,11 @@ export function createAmesRoom(): Exhibit {
   });
   const ceilMat = new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 1, side });
 
+  // 左壁は「内側からだけ見える」片面レンダリングにする。
+  // 覗き窓からは普通の壁に見え、西側のガラス面からは透けて部屋の中が見える
+  const wallMatLeft = wallMat.clone();
+  wallMatLeft.side = THREE.BackSide;
+
   const lerp = THREE.MathUtils.lerp;
   // 床・天井・奥壁・左右の壁(仮想の部屋 → 歪ませて構築)
   root.add(
@@ -167,7 +172,7 @@ export function createAmesRoom(): Exhibit {
     ),
     buildDistortedSurface(
       (u, v) => new THREE.Vector3(-ROOM_W, lerp(0, ROOM_H, v), lerp(ROOM_NEAR, ROOM_FAR, u)),
-      wallMat,
+      wallMatLeft,
     ),
     buildDistortedSurface(
       (u, v) => new THREE.Vector3(ROOM_W, lerp(0, ROOM_H, v), lerp(ROOM_NEAR, ROOM_FAR, u)),
@@ -218,18 +223,32 @@ export function createAmesRoom(): Exhibit {
   addShellBox(W / 2 + winW / 4, H / 2, T / 2, W - winW / 2, H, T);
   addShellBox(0, (1.6 - winH / 2) / 2, T / 2, winW, 1.6 - winH / 2, T);
   addShellBox(0, 1.6 + winH / 2 + (H - 1.6 - winH / 2) / 2, T / 2, winW, H - 1.6 - winH / 2, T);
-  // 背面・側面・天井
+  // 背面・東側面・天井
   addShellBox(0, H / 2, -D - T / 2, 2 * W + 2 * T, H, T);
-  addShellBox(-W - T / 2, H / 2, -D / 2, T, H, D + T);
   addShellBox(W + T / 2, H / 2, -D / 2, T, H, D + T);
   addShellBox(0, H + T / 2, -D / 2, 2 * W + 2 * T, T, D + T);
+  // 西側面はガラス張り: 外から歪んだ部屋の実態(種明かし)が見える
+  const glass = new THREE.Mesh(
+    new THREE.BoxGeometry(0.04, H - 0.24, D + T),
+    new THREE.MeshStandardMaterial({
+      color: 0xbfd8e8,
+      transparent: true,
+      opacity: 0.12,
+      roughness: 0.12,
+      depthWrite: false,
+    }),
+  );
+  glass.position.set(-W - T / 2, H / 2, -D / 2);
+  shell.add(glass);
+  addShellBox(-W - T / 2, 0.06, -D / 2, T, 0.12, D + T);
+  addShellBox(-W - T / 2, H - 0.06, -D / 2, T, 0.12, D + T);
   root.add(shell);
 
   return {
     id: 'ames-room',
     title: 'エイムズの部屋',
     hint:
-      '覗き窓から見えるのは普通の長方形の部屋ですが、実際の部屋は大きく歪んでいます。左奥の角は遠く低く、右奥の角は近く高い台形の部屋で、覗き窓の一点からだけ長方形に見えるよう設計されています。2 体の人形はまったく同じ大きさですが、片方は遠く、片方は近くに立っているため、大きさが激変して見えます。',
+      '覗き窓から見えるのは普通の長方形の部屋ですが、実際の部屋は大きく歪んでいます。右へ行くほど部屋は縮んで床がせり上がる台形で、覗き窓の一点からだけ長方形に見えるよう設計されています。2 体の人形はまったく同じ大きさですが、左は遠く、右は近くに立っているため、大きさが激変して見えます。横のガラス面から覗くと、部屋の本当の形が分かります。',
     root,
     viewSpot: {
       position: new THREE.Vector3(0, 1.6, 0.5),
