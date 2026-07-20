@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createPenroseTriangle } from '../src/exhibits/PenroseTriangle';
 import { createPenroseStairs } from '../src/exhibits/PenroseStairs';
 import { createHollowFace } from '../src/exhibits/HollowFace';
+import { createImpossibleCube } from '../src/exhibits/ImpossibleCube';
 import type { Exhibit } from '../src/exhibits/Exhibit';
 
 // Canvas(DOM)に依存しない展示のみをここで検証する
@@ -9,6 +10,7 @@ const factories: Array<() => Exhibit> = [
   createPenroseTriangle,
   createPenroseStairs,
   createHollowFace,
+  createImpossibleCube,
 ];
 
 describe('展示の共通契約', () => {

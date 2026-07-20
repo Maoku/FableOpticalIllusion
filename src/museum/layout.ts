@@ -7,6 +7,8 @@ import { createAnamorphosis } from '../exhibits/Anamorphosis';
 import { createPenroseStairs } from '../exhibits/PenroseStairs';
 import { createAmesRoom } from '../exhibits/AmesRoom';
 import { createHollowFace } from '../exhibits/HollowFace';
+import { createRotatingSnakes } from '../exhibits/RotatingSnakes';
+import { createImpossibleCube } from '../exhibits/ImpossibleCube';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 import { createTitlePlate, createWallSign } from './TitlePlate';
 
@@ -90,17 +92,28 @@ export function createMuseumLayout(): MuseumLayout {
   const exhibits: Exhibit[] = [];
   const extras: THREE.Object3D[] = [];
 
-  // --- 2D 錯視ギャラリー: 北側の壁に 4 枚 ---
+  // --- 2D 錯視ギャラリー: 北側の壁に 4 枚+西側の壁に 2 枚 ---
   const gallery = createGallery2D();
   const wallZ = -14.55;
-  const xs = [-10, -5, 0, 5];
+  const galleryPlacements = [
+    { x: -10, z: wallZ, rotY: 0 },
+    { x: -5, z: wallZ, rotY: 0 },
+    { x: 0, z: wallZ, rotY: 0 },
+    { x: 5, z: wallZ, rotY: 0 },
+    { x: -14.55, z: -1.5, rotY: Math.PI / 2 },
+    { x: -14.55, z: 1.5, rotY: Math.PI / 2 },
+  ];
   gallery.forEach((ex, i) => {
-    const x = xs[i] ?? 0;
-    placeExhibit(ex, x, wallZ);
+    const p = galleryPlacements[i];
+    if (!p) return;
+    placeExhibit(ex, p.x, p.z, p.rotY);
+    // 壁の法線方向(絵の正面)にスポットライトを置く
+    const nx = Math.sin(p.rotY);
+    const nz = Math.cos(p.rotY);
     extras.push(
       createExhibitSpotlight(
-        new THREE.Vector3(x, 4.2, wallZ + 2.6),
-        new THREE.Vector3(x, 1.6, wallZ),
+        new THREE.Vector3(p.x + nx * 2.6, 4.2, p.z + nz * 2.6),
+        new THREE.Vector3(p.x, 1.6, p.z),
       ),
     );
     exhibits.push(ex);
@@ -147,6 +160,23 @@ export function createMuseumLayout(): MuseumLayout {
   );
   exhibits.push(hollowFace);
   placePlate(extras, hollowFace.title, -10.9, 3.4, Math.PI / 2);
+
+  // --- 回転蛇錯視: 仕切り壁の主展示室側 ---
+  const snakes = createRotatingSnakes();
+  placeExhibit(snakes, -6, 6.78, Math.PI);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-6, 4.2, 4.2), new THREE.Vector3(-6, 1.8, 6.85)),
+  );
+  exhibits.push(snakes);
+
+  // --- 不可能な立方体: 主展示室の中央西寄り ---
+  const cube = createImpossibleCube();
+  placeExhibit(cube, -5, -2, 0);
+  extras.push(
+    createExhibitSpotlight(new THREE.Vector3(-5, 4.3, 0.5), new THREE.Vector3(-5, 1.2, -2), 50),
+  );
+  exhibits.push(cube);
+  placePlate(extras, cube.title, -6.4, -0.7, 0);
 
   // --- エントランスの演出 ---
   const sign = createWallSign('FABLE OPTICAL ILLUSION MUSEUM', 5.2, 0.8);
