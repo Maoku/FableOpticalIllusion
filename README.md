@@ -57,6 +57,13 @@ npm run format   # Prettier
 
 ## デプロイ
 
-完全に静的なサイトです。`npm run build` の `dist/` を GitHub Pages や
-Cloudflare Pages などの静的ホスティングへそのまま配置できます
-(`vite.config.ts` で `base: './'` 設定済みのためサブパス配下でも動作します)。
+`main` ブランチへ push すると、GitHub Actions が `npm run build` を実行し、
+生成した `dist/` を GitHub Pages へ自動デプロイします。
+
+初回のみ、GitHub リポジトリの **Settings → Pages → Build and deployment → Source** で
+**GitHub Actions** を選択してください。その後のデプロイ状況と公開 URL は、
+リポジトリの **Actions** または **Settings → Pages** で確認できます。
+
+Actions 画面の **Deploy to GitHub Pages** から手動実行することもできます。
+`vite.config.ts` で `base: './'` を設定しているため、ユーザーサイトと
+プロジェクトサイトのどちらでも動作します。
