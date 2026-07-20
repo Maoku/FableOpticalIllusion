@@ -6,6 +6,7 @@ import {
   createKanizsaCanvas,
   createMullerLyerCanvas,
 } from './textures';
+import { createWallLabel } from '../../museum/TitlePlate';
 
 interface PaintingDef {
   id: string;
@@ -82,6 +83,9 @@ export function createGallery2D(): Exhibit[] {
     const painting = createFramedPainting(def);
     painting.position.y = 1.65; // 目線の高さに掲示
     root.add(painting);
+    const label = createWallLabel(def.title);
+    label.position.set(0.35, 0.62, 0.02);
+    root.add(label);
     return {
       id: def.id,
       title: def.title,
