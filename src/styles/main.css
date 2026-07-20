@@ -1,0 +1,107 @@
+:root {
+  --ui-bg: rgba(18, 18, 24, 0.85);
+  --ui-fg: #eae6dc;
+  --ui-accent: #d4b06a;
+  font-family: 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0b0f;
+  color: var(--ui-fg);
+}
+
+#app,
+#app canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+}
+
+#ui-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* --- クロスヘア --- */
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+/* --- 操作説明 --- */
+.help {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 10px 14px;
+  background: var(--ui-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+  opacity: 0.9;
+}
+
+.help kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 11px;
+  margin-right: 2px;
+}
+
+/* --- 入館オーバーレイ --- */
+.start-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(8, 8, 12, 0.72);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.start-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.start-overlay h1 {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ui-accent);
+}
+
+.start-overlay p {
+  font-size: 14px;
+  opacity: 0.85;
+}
