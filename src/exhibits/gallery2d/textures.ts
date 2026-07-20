@@ -121,8 +121,8 @@ export function createMullerLyerCanvas(): HTMLCanvasElement {
     }
   };
 
-  drawLine(size * 0.36, false); // 外向きの矢羽(短く見える)
-  drawLine(size * 0.64, true); // 内向きの矢羽(長く見える)
+  drawLine(size * 0.36, false); // 矢羽が外へ開いた線(長く見える)
+  drawLine(size * 0.64, true); // 矢印の先端で挟まれた線(短く見える)
 
   return canvas;
 }
