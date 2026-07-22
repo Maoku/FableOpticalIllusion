@@ -90,3 +90,40 @@ export function createWallSign(text: string, width = 4.2, height = 0.75): THREE.
     dark,
   ]);
 }
+
+/**
+ * 床置きの自立式案内看板。原点は床、看板面は +z 向き。
+ * 支柱と台座付きで、館内の順路案内などに使う。
+ */
+export function createStandingSign(text: string, width = 2.4, height = 0.62): THREE.Object3D {
+  const group = new THREE.Group();
+
+  const boardCenterY = 1.5;
+  const board = createWallSign(text, width, height);
+  board.position.set(0, boardCenterY, 0);
+  group.add(board);
+
+  const postHeight = boardCenterY - height / 2;
+  const postMat = new THREE.MeshStandardMaterial({
+    color: 0x8a713f,
+    roughness: 0.45,
+    metalness: 0.5,
+  });
+  for (const dx of [-(width / 2) + 0.2, width / 2 - 0.2]) {
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.035, postHeight, 12),
+      postMat,
+    );
+    post.position.set(dx, postHeight / 2, 0);
+    group.add(post);
+  }
+
+  const base = new THREE.Mesh(
+    new THREE.BoxGeometry(width * 0.8, 0.05, 0.36),
+    new THREE.MeshStandardMaterial({ color: 0x2c2a30, roughness: 0.8 }),
+  );
+  base.position.y = 0.025;
+  group.add(base);
+
+  return group;
+}

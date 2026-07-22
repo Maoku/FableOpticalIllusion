@@ -18,7 +18,7 @@ import { createPaintlessYellow } from '../exhibits/PaintlessYellow';
 import { createBreathingStatue } from '../exhibits/BreathingStatue';
 import { createMotionGhost } from '../exhibits/MotionGhost';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
-import { createTitlePlate, createWallSign } from './TitlePlate';
+import { createTitlePlate, createWallSign, createStandingSign } from './TitlePlate';
 
 export interface MuseumLayout {
   building: BuildingDef;
@@ -289,6 +289,19 @@ export function createMuseumLayout(): MuseumLayout {
   const entranceLight = new THREE.PointLight(0xfff0dd, 30, 20, 1.8);
   entranceLight.position.set(0, 4.1, 11);
   extras.push(entranceLight);
+
+  // 正面入り口の右手に、新館への順路案内看板を立てる
+  const annexGuide = createStandingSign('新館 FABLE ORIGINALS はこちら →', 2.7, 0.62);
+  annexGuide.position.set(5.2, 0, 11.4);
+  annexGuide.rotation.y = -Math.PI / 3.4;
+  extras.push(annexGuide);
+  extras.push(
+    createExhibitSpotlight(
+      new THREE.Vector3(4.4, 3.4, 12.4),
+      new THREE.Vector3(5.2, 1.5, 11.4),
+      22,
+    ),
+  );
   const hallLight = new THREE.PointLight(0xe8e4ff, 18, 22, 1.9);
   hallLight.position.set(-2, 4.2, -4);
   extras.push(hallLight);
