@@ -290,15 +290,15 @@ export function createMuseumLayout(): MuseumLayout {
   entranceLight.position.set(0, 4.1, 11);
   extras.push(entranceLight);
 
-  // 正面入り口の右手に、新館への順路案内看板を立てる
+  // 正面入り口の右手、仕切り壁(東セグメント)の足元に新館への順路案内看板を立てる
   const annexGuide = createStandingSign('新館 FABLE ORIGINALS はこちら →', 2.7, 0.62);
-  annexGuide.position.set(5.2, 0, 11.4);
-  annexGuide.rotation.y = -Math.PI / 3.4;
+  annexGuide.position.set(6.5, 0, 7.55);
+  annexGuide.rotation.y = 0;
   extras.push(annexGuide);
   extras.push(
     createExhibitSpotlight(
-      new THREE.Vector3(4.4, 3.4, 12.4),
-      new THREE.Vector3(5.2, 1.5, 11.4),
+      new THREE.Vector3(6.5, 3.4, 9.2),
+      new THREE.Vector3(6.5, 1.5, 7.55),
       22,
     ),
   );
