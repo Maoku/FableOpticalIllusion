@@ -12,6 +12,11 @@ import { createImpossibleCube } from '../exhibits/ImpossibleCube';
 import { createTwoTruths } from '../exhibits/TwoTruths';
 import { createColorConstancyRoom } from '../exhibits/ColorConstancyRoom';
 import { createMullerLyerStation } from '../exhibits/MullerLyerStation';
+import { createVanishingGrove } from '../exhibits/VanishingGrove';
+import { createLiarsMirror } from '../exhibits/LiarsMirror';
+import { createPaintlessYellow } from '../exhibits/PaintlessYellow';
+import { createBreathingStatue } from '../exhibits/BreathingStatue';
+import { createMotionGhost } from '../exhibits/MotionGhost';
 import { createViewSpotMarker } from '../exhibits/ViewSpotMarker';
 import { createTitlePlate, createWallSign } from './TitlePlate';
 
@@ -25,8 +30,9 @@ export interface MuseumLayout {
 }
 
 /**
- * 館の形状: 30 x 30 のワンフロア。
+ * 館の形状: 30 x 30 の本館ワンフロア+東側の新館「FABLE ORIGINALS」(20 x 20)。
  * 南側がエントランスホールで、中央の開口から主展示室へ入る。
+ * 新館へはエントランスホール東側の開口(z 8.5〜13.5)から入る。
  */
 function createBuildingDef(): BuildingDef {
   const size = 30;
@@ -34,16 +40,27 @@ function createBuildingDef(): BuildingDef {
   const t = 0.3; // 壁厚
   return {
     wallHeight: 4.5,
-    floors: [{ x: 0, z: 0, w: size, d: size }],
+    floors: [
+      { x: 0, z: 0, w: size, d: size },
+      // 新館(x 15〜35, z 1〜21)
+      { x: 25, z: 11, w: 20, d: 20 },
+    ],
     walls: [
       // 外周
       { x: 0, z: -half, w: size + t, d: t },
       { x: 0, z: half, w: size + t, d: t },
       { x: -half, z: 0, w: t, d: size + t },
-      { x: half, z: 0, w: t, d: size + t },
+      // 東壁は新館への開口(z 8.5〜13.5)を挟んで 2 分割
+      { x: half, z: -3.325, w: t, d: 23.65 }, // z -15.15〜8.5
+      { x: half, z: 14.325, w: t, d: 1.65 }, // z 13.5〜15.15
+      { x: half, z: 18.15, w: t, d: 6.0 }, // 新館の西壁(本館より南の部分)
       // エントランスと主展示室を仕切る壁(中央に幅 7 の開口)
       { x: -9.25, z: 7, w: 11.5, d: t },
       { x: 9.25, z: 7, w: 11.5, d: t },
+      // 新館の外周
+      { x: 25.075, z: 1, w: 20.15, d: t },
+      { x: 25.075, z: 21, w: 20.15, d: t },
+      { x: 35, z: 11, w: t, d: 20 + t },
     ],
   };
 }
@@ -204,6 +221,65 @@ export function createMuseumLayout(): MuseumLayout {
   );
   exhibits.push(mlStation);
   placePlate(extras, mlStation.title, -5.6, 12.4, Math.PI / 2);
+
+  // =====================================================================
+  // 新館「FABLE ORIGINALS」— Fable 考案のオリジナル錯視 5 点
+  // =====================================================================
+
+  // --- 消える林: 新館東壁の壁画前。扉からまっすぐ正面に見える ---
+  const grove = createVanishingGrove();
+  placeExhibit(grove, 34.84, 11, -Math.PI / 2);
+  exhibits.push(grove);
+  placePlate(extras, grove.title, 28.4, 12.3, -Math.PI / 2);
+
+  // --- 嘘つきの鏡: 新館北壁のアルコーブ、南向き ---
+  const mirror = createLiarsMirror();
+  placeExhibit(mirror, 26, 3.5, 0);
+  exhibits.push(mirror);
+  placePlate(extras, mirror.title, 24.5, 6.2, 0);
+
+  // --- 絵の具のない黄色: 新館南壁、北向き。遠距離のビュースポット付き ---
+  const pointillism = createPaintlessYellow();
+  placeExhibit(pointillism, 25.5, 20.6, Math.PI);
+  exhibits.push(pointillism);
+  placePlate(extras, pointillism.title, 24.0, 18.7, Math.PI);
+
+  // --- 呼吸する石像: 新館南西の独立展示、ビュースポットは北側 ---
+  const breathing = createBreathingStatue();
+  placeExhibit(breathing, 19.5, 17.5, Math.PI);
+  extras.push(
+    createExhibitSpotlight(
+      new THREE.Vector3(19.5, 4.3, 14.6),
+      new THREE.Vector3(19.5, 1.5, 17.5),
+      28,
+    ),
+  );
+  exhibits.push(breathing);
+  placePlate(extras, breathing.title, 18.1, 15.0, Math.PI);
+
+  // --- 動きが生む幽霊: 新館西壁(扉の北側)の暗いブース、東向き ---
+  const ghost = createMotionGhost();
+  placeExhibit(ghost, 16.6, 5.5, Math.PI / 2);
+  exhibits.push(ghost);
+  placePlate(extras, ghost.title, 19.0, 7.0, Math.PI / 2);
+
+  // --- 新館の照明とサイン ---
+  const annexSign = createWallSign('FABLE ORIGINALS — 考案: Claude Fable 5', 4.6, 0.75);
+  annexSign.position.set(21, 3.55, 1.19);
+  extras.push(annexSign);
+  const annexDoorSign = createWallSign('新館 FABLE ORIGINALS →', 1.55, 0.5);
+  annexDoorSign.position.set(14.81, 2.7, 14.3);
+  annexDoorSign.rotation.y = -Math.PI / 2;
+  extras.push(annexDoorSign);
+  for (const [x, z] of [
+    [20, 6],
+    [29, 11],
+    [21, 16],
+  ]) {
+    const light = new THREE.PointLight(0xe8e4ff, 16, 22, 1.9);
+    light.position.set(x, 4.15, z);
+    extras.push(light);
+  }
 
   // --- エントランスの演出 ---
   const sign = createWallSign('FABLE OPTICAL ILLUSION MUSEUM', 5.2, 0.8);

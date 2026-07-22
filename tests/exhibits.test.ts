@@ -3,6 +3,9 @@ import { createPenroseTriangle } from '../src/exhibits/PenroseTriangle';
 import { createPenroseStairs } from '../src/exhibits/PenroseStairs';
 import { createHollowFace } from '../src/exhibits/HollowFace';
 import { createImpossibleCube } from '../src/exhibits/ImpossibleCube';
+import { createLiarsMirror } from '../src/exhibits/LiarsMirror';
+import { createBreathingStatue } from '../src/exhibits/BreathingStatue';
+import { createMotionGhost } from '../src/exhibits/MotionGhost';
 import type { Exhibit } from '../src/exhibits/Exhibit';
 
 // Canvas(DOM)に依存しない展示のみをここで検証する
@@ -11,6 +14,9 @@ const factories: Array<() => Exhibit> = [
   createPenroseStairs,
   createHollowFace,
   createImpossibleCube,
+  createLiarsMirror,
+  createBreathingStatue,
+  createMotionGhost,
 ];
 
 describe('展示の共通契約', () => {
